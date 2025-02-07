@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Be My Valentine Employee Edition 💘</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.0.0/dist/full.css" rel="stylesheet" />
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .yes-button {
+            font-size: 1.5em;
+            padding: 10px 20px;
+            margin-right: 10px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .no-button {
+            font-size: 1.5em;
+            padding: 10px 20px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+  
+    </style>
+</head>
+<body class="bg-gradient-to-r from-pink-200 to-red-200 min-h-screen flex items-center justify-center">
+     <!-- Loader -->
+     <div id="loader" class="loader">
+        <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-pink-500 border-solid"></div>
+    </div>
+    
+    <div 
+        x-data="valentineSelector()" 
+        class="container mx-auto p-6 bg-white shadow-2xl rounded-2xl max-w-5xl"
+    >
+
+        <h1 class="text-4xl font-bold text-center text-pink-600 mb-8">
+            💘 Top cinqo+1 reasons why you can be my valentine 💘
+        </h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <template x-for="employee in filteredreasons" :key="employee.id">
+                <div 
+                    @click="selectValentine(employee)" 
+                    class="card w-full bg-base-100 shadow-xl hover:shadow-2xl hover:scale-105 hover:bg-pink-50 transition-all duration-300 cursor-pointer group"
+                >
+                    <figure class="px-10 pt-8 overflow-hidden">
+                        <img 
+                            :src="employee.image" 
+                            class="rounded-xl h-40 w-40 object-cover border-4 border-pink-300 transition-transform duration-300 group-hover:scale-110"
+                        />
+                    </figure>
+                    <div class="card-body items-center text-center">
+                        <h2 
+                            class="card-title text-xl text-pink-700 transition-colors duration-300 group-hover:text-pink-500"
+                            x-text="employee.name"
+                        ></h2>
+                        <p 
+                            class="text-gray-600 transition-opacity duration-300 group-hover:opacity-80"
+                            x-text="employee.description"
+                        ></p>
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        <div class="card-body items-center text-center">
+            <h1 class="card-title text-4xl font-bold mb-8">Will you be my Valentine?</h1>
+            
+            <div class="my-6">
+                <button 
+                    class="yes-button"
+                    onclick="handleYesClick()"
+                >
+                    Yes
+                </button>
+                <button 
+                    class="no-button"
+                    onclick="handleNoClick()"
+                >
+                    No
+                </button>
+            </div>
+            <div class="gif_container flex justify-center mt-4">
+                <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExbW5lenZyZHI5OXM2eW95b3pmMG40cWVrMDhtNjVuM3A4dGNxa2g2dSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/VM1fcpu2bKs1e2Kdbj/giphy.gif" alt="Cute GIF" class="rounded-lg">
+            </div>
+        </div>
+        
+
+        
+        <!-- Modal -->
+        <div x-show="selectedValentine" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" @click.away="selectedValentine = null">
+            <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm text-center">
+                <div class="row flex justify-between items-center">
+                    <button @click="selectedValentine = null" class="text-gray-600">✖</button>
+                </div>
+                <img :src="selectedValentine.image" class="w-40 h-40 object-cover mx-auto rounded-xl border-4 border-pink-300 mb-4">
+             
+                <h2 class="text-2xl font-bold text-pink-600" x-text="selectedValentine.name"></h2>
+                <p class="text-gray-700 m-2 " x-text="selectedValentine.description"></p>
+                <p class="text-pink-700 font-semibold mt-4" x-text="valentineReason"></p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+         const messages = [
+            "Are you sure?",
+            "Really sure??",
+            "Are you positive?",
+            "Pookie please...",
+            "Just think about it!",
+            "If you say no, I will be really sad...",
+            "I will be very sad...",
+            "I will be very very very sad...",
+            "Ok fine, I will stop asking...",
+            "Just kidding, say yes please! ❤️"
+        ];
+
+        let messageIndex = 0;
+
+        function handleNoClick() {
+            const noButton = document.querySelector('.no-button');
+            const yesButton = document.querySelector('.yes-button');
+            noButton.textContent = messages[messageIndex];
+            messageIndex = (messageIndex + 1) % messages.length;
+            const currentSize = parseFloat(window.getComputedStyle(yesButton).fontSize);
+            yesButton.style.fontSize = `${currentSize * 1.5}px`;
+        }
+
+        function handleYesClick() {
+            window.location.href = "yes_page.html";
+        }
+
+         window.onload = function() {
+            document.getElementById("loader").style.display = "none";
+            document.getElementById("content").classList.remove("hidden");
+        };
+
+        function valentineSelector() {
+            const reasons = [
+                { id: "1", name: "You are obligated", description: "", image: "images/doge-gun.jpg" },
+                { id: "2", name: "I could give you cuddle", description: "", image: "images/stonks.jpg" },
+                { id: "3", name: "I'm a gym rat", description: "", image: "images/big-doge.jpg" },
+                { id: "4", name: "i love you so much", description: "", image: "images/cute-cat.jpg" },
+                { id: "5", name: "please", description: "", image: "images/cute-catV2.png" },
+                { id: "6", name: "I could offer you a beer ", description: "", image: "images/brother-offer.png" },
+            ];
+
+            return {
+                selectedValentine: null,
+                valentineReason: '',
+
+                get filteredreasons() {
+                    return reasons;
+                },
+
+                selectValentine(employee) {
+                    this.selectedValentine = employee;
+                    this.valentineReason = this.generateValentineReason(employee);
+                },
+
+                generateValentineReason(employee) {
+
+                    const reasonsResponse = [
+                        `Sorry but you signed a contract with death, you are mine now`,
+                        `I love the 'cuddle moment' with you, i want to give you a infinity number of kiss`,
+                        `I can protect you from everything, like the indian with some rose - (i could buy one for you <3)`,
+                        `I love everything about you, like your soul or your pretty face`,
+                        `i want to have you in my life, i'm very happy and relaxed when i stay with you, i feel understood and myself`,
+                        `I love beer and we could drink it together durig the sunset`
+                    ];
+
+                    return reasonsResponse[(employee.id - 1)];
+                }
+            };
+        }
+    </script>
+</body>
+</html>
